@@ -1,0 +1,15 @@
+{
+    "consumer_key": "",
+    "consumer_secret": "",
+    "access_token": "",
+    "access_token_secret": "",
+    "callback": "",
+
+    "default_blend": "",
+    "nondefault_chance": 0.25,
+    "gif_duration": 2.0,
+    "hostname_filter": "",
+
+    "kprs_path": "",
+    "kprs_chrs": ["kl", "aa", "kk", "ac"]
+}
