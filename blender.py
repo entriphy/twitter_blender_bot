@@ -2,22 +2,25 @@ import bpy
 import os
 import random
 
-# Get animations
+# Get animations and cameras
 actions: list[bpy.types.Action] = [a for a in bpy.data.actions if "Armature" in a.name] # Animations
-mesh_actions: list[bpy.types.Action] = [a for a in bpy.data.actions if "Armature" not in a.name] # Blend shape animations
 cameras: list[bpy.types.Object] = [c for c in bpy.data.objects if c.type == "CAMERA"]
 
 # Scene setup
-camera = random.choice(cameras) # Select random camera to use
 action = random.choice(actions) # Select random animation
-idx = action.name.split("_")[0] # Get index of animation
-action_name = '_'.join(action.name.split('_')[1:-1]) # Get animation name
+camera = random.choice(cameras) # Select random camera to use
+action_name = action.name # Get animation name
 bpy.data.objects["Armature"].animation_data.action = action # Set animation to randomly selected action
 bpy.context.scene.frame_end = int(action.curve_frame_range[1]) # Set length of render to length of action
 bpy.context.scene.camera = camera # Set active camera to randomly selected camera
 
-# Apply blend shape animations (if any)
+# Klonoa-specific stuff. Comment or delete this code if you do not need it.
+split = action.name.split("_")
+idx = split[0]
+action_name = "_".join(split[1:-1])
+mesh_actions: list[bpy.types.Action] = [a for a in bpy.data.actions if "Armature" not in a.name]
 for mesh_action in mesh_actions:
+    # Apply blend shape animations (if any)
     if mesh_action.name.startswith(f"{idx}_"):
         part = mesh_action.name.split("_")[-1]
         mesh: bpy.types.Mesh = bpy.data.objects[part].data
