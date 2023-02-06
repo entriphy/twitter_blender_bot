@@ -3,8 +3,6 @@ Twitter bot that tweets a random animation from a .blend file. This project is u
 
 Sample .blend files are provided in the "Klonoa Animations" section.
 
-NOTE: Windows and macOS are currently unsupported.
-
 # Setup + Running
 1. Install the [`tweepy`](https://pypi.org/project/tweepy/) package.
     * `pip install tweepy`
@@ -21,6 +19,8 @@ The script can be configured by editing `config.json`.
 
 ## Twitter configuration
 All fields are required to tweet the rendered video. API keys can be retrieved by creating an application in the Twitter Developer Portal, and account credentials for the bot account can be retrieved by following Twitter's [3-legged OAuth 1.0 Flow](https://developer.twitter.com/en/docs/authentication/oauth-1-0a/obtaining-user-access-tokens).
+
+These values can also be passed to the script as environment variables instead of storing the credentials as plaintext, i.e. `consumer_key` = `TWITTER_CONSUMER_KEY`, `access_token_secret` = `TWITTER_ACCESS_TOKEN_SECRET`, etc. 
 | Name                  | Type  | Description                                      |
 |-----------------------|-------|--------------------------------------------------|
 | `consumer_key`        | `str` | Key for Twitter API application.                 |
@@ -55,3 +55,4 @@ An archive of all blend files being used for [@klonoa_anim_bot](https://twitter.
     "gif_duration": 2.0
 }
 ```
+You must also use `kprs_anim_info.py` to extract animation descriptions.
