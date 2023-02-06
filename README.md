@@ -8,8 +8,8 @@ NOTE: Windows and macOS are currently unsupported.
 # Setup + Running
 1. Install the [`tweepy`](https://pypi.org/project/tweepy/) package.
     * `pip install tweepy`
-2. Ensure `blender` and `ffmpeg` are both installed and in `PATH`.
-    * `TODO: Add support for specifying a custom Blender/ffmpeg path`
+2. Ensure `blender`, `ffmpeg`, `ffprobe` are installed and in `PATH`.
+    *  The path to these executables can also be set in `config.json`. On Windows and macOS, you will most likely need to do this.
 3. Add Twitter API and bot account credentials in `config.json` (see "Configuration" section).
 4. Place .blend file(s) in the `blend` directory.
     * Ensure the scene has one armature named "Armature" with actions associated with it and at least one camera. If there is more than one camera in the scene, a random camera will be selected.
@@ -30,11 +30,14 @@ All fields are required to tweet the rendered video. API keys can be retrieved b
 | `callback`            | `str` | Callback URL for Twitter API application.        |
 
 ## General Configuration
-| Name                | Type    | Description                                                                                                                                                                              |
-|---------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `default_blend`     | `str`   | Filename of default blend file to render. Think of this like a "priority" blend file, i.e. you want to render and tweet a certain blend file more than others. If empty, a random blend file from the `blend` directory will be selected. |
-| `nondefault_chance` | `float` | The percentage chance that a nondefault blend file will be randomly selected. Must be a value between 0.0 and 1.0. Only works if `default_blend` is not empty.                           |
-| `gif_duration`      | `float` | The max video length allowed when converting the rendered video to a GIF. If the video length exceeds this number, the video file will not be converted to a GIF and will be uploaded as an MP4.                        |
+| Name                | Type    | Description                                                                                                                                                                                                                                |
+|---------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `default_blend`     | `str`   | Filename of default blend file to render. Think of this like a "priority" blend file, i.e. you want to render and tweet a certain blend file more than others. If empty, a random blend file from the  `blend` directory will be selected. |
+| `nondefault_chance` | `float` | The percentage chance that a nondefault blend file will be randomly selected. Must be a value between 0.0 and 1.0. Only works if `default_blend` is not empty.                                                                             |
+| `gif_duration`      | `float` | The max video length allowed when converting the rendered video to a GIF. If the video length exceeds this number, the video file will not be converted to a GIF and will be uploaded as an MP4.                                           |
+| `blender_path`      | `str`   | Path to Blender executable.                                                                                                                                                                                                                |
+| `ffmpeg_path`       | `str`   | Path to FFmpeg executable.                                                                                                                                                                                                                 |
+| `ffprobe_path`      | `str`   | Path to ffprobe executable.                                                                                                                                                                                                                |
 
 ## KPRS configuration
 These fields are required when using the `kprs_anim_info.py` script to extract animation descriptions.

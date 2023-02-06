@@ -9,6 +9,9 @@
     "nondefault_chance": 0.25,
     "gif_duration": 2.0,
     "hostname_filter": "",
+    "blender_path": "",
+    "ffmpeg_path": "",
+    "ffprobe_path": "",
 
     "kprs_path": "",
     "kprs_chrs": ["kl", "aa", "kk", "ac"]
