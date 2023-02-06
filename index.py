@@ -71,9 +71,9 @@ if __name__ == "__main__":
     
     # Tweepy setup
     auth = tweepy.OAuth1UserHandler(
-        config["consumer_key"], config["consumer_secret"],
-        config["access_token"], config["access_token_secret"],
-        callback=config["callback"]
+        os.environ.get("TWITTER_CONSUMER_KEY") or config["consumer_key"], os.environ.get("TWITTER_CONSUMER_SECRET") or config["consumer_secret"],
+        os.environ.get("TWITTER_ACCESS_TOKEN") or config["access_token"], os.environ.get("TWITTER_ACCESS_TOKEN_SECRET") or config["access_token_secret"],
+        callback=os.environ.get("TWITTER_CALLBACK") or config["callback"]
     )
     api = tweepy.API(auth)
 
