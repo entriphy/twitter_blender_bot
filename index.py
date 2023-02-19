@@ -3,14 +3,15 @@ import os
 import platform
 import random
 import subprocess
+import sys
 import time
 import tweepy
 
-def mp4_to_gif(filename):
+def mp4_to_gif(filename) -> int:
     result = subprocess.run([ffmpeg_path, "-i", filename, "-vf", 'fps=50,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', filename.replace("mp4", "gif")], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     if result.returncode != 0:
         raise Exception(result.stdout)
-    return result
+    return result.returncode
 
 def get_length(filename) -> float:
     result = subprocess.run([ffprobe_path, "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", filename], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -40,18 +41,22 @@ if __name__ == "__main__":
     ffprobe_path = config["ffprobe_path"] or "ffprobe"
 
     # Select which blend file to render from
-    if config["default_blend"] != "":
-        # Select default blend file
-        blend_file = config["default_blend"]
-
-        # Random chance to select a nondefault blend file
-        if random.randint(0, 100) / 100 < config["nondefault_chance"]:
-            files = get_blend_files("blend") # Get list of blend files
-            files.remove(blend_file) # Remove default blend file from list
-            blend_file = random.choice(files) # Select random blend file
+    if len(sys.argv) > 1:
+        # Get blend file from command line
+        blend_file = sys.argv[1]
     else:
-        # Select a random blend file
-        blend_file = random.choice(get_blend_files("blend"))
+        if config["default_blend"] != "":
+            # Select default blend file
+            blend_file = config["default_blend"]
+
+            # Random chance to select a nondefault blend file
+            if random.randint(0, 100) / 100 < config["nondefault_chance"]:
+                files = get_blend_files("blend") # Get list of blend files
+                files.remove(blend_file) # Remove default blend file from list
+                blend_file = random.choice(files) # Select random blend file
+        else:
+            # Select a random blend file
+            blend_file = random.choice(get_blend_files("blend"))
 
     # Render a random animation from the blend file
     subprocess.run([blender_path, "--background", f"blend/{blend_file}", "--python", "blender.py"])
