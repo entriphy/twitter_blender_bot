@@ -32,8 +32,6 @@ These values can also be passed to the script as environment variables instead o
 ## General Configuration
 | Name                | Type    | Description                                                                                                                                                                                                                                |
 |---------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `default_blend`     | `str`   | Filename of default blend file to render. Think of this like a "priority" blend file, i.e. you want to render and tweet a certain blend file more than others. If empty, a random blend file from the  `blend` directory will be selected. |
-| `nondefault_chance` | `float` | The percentage chance that a nondefault blend file will be randomly selected. Must be a value between 0.0 and 1.0. Only works if `default_blend` is not empty.                                                                             |
 | `gif_duration`      | `float` | The max video length allowed when converting the rendered video to a GIF. If the video length exceeds this number, the video file will not be converted to a GIF and will be uploaded as an MP4.                                           |
 | `blender_path`      | `str`   | Path to Blender executable.                                                                                                                                                                                                                |
 | `ffmpeg_path`       | `str`   | Path to FFmpeg executable.                                                                                                                                                                                                                 |
@@ -46,13 +44,9 @@ These fields are required when using the `kprs_anim_info.py` script to extract a
 | `kprs_path` | `str`       | Path to [Klonoa Phantasy Reverie Series](https://store.steampowered.com/app/1730680/Klonoa_Phantasy_Reverie_Series) install directory (ex. .../steamapps/common/KLONOA). |
 | `kprs_chrs` | `list[str]` | List of character IDs to extract animation descriptions from.                               |
 
+## Randomization
+Upon running the script, a `random.json` file will be generated, which contains the weighted random value for each blend file and is based on the number of animations in the blend file. If you want a blend file to get selected less/more often, adjust the values in `random.json` accordingly.
+
 ## Klonoa Animations
-An archive of all blend files being used for [@klonoa_anim_bot](https://twitter.com/klonoa_anim_bot) can be downloaded from [here](https://files.catbox.moe/gbtx8i.zip). The bot uses the following configuration:
-```
-{
-    "default_blend": "klonoa.blend",
-    "nondefault_chance": 0.25,
-    "gif_duration": 2.0
-}
-```
+An archive of all blend files being used for [@klonoa_anim_bot](https://twitter.com/klonoa_anim_bot) can be downloaded from [here](https://files.catbox.moe/gbtx8i.zip).
 You must also use `kprs_anim_info.py` to extract animation descriptions.
