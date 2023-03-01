@@ -1,10 +1,14 @@
 import bpy
 import os
 import random
+import sys
 
 # Get animations and cameras
 actions: list[bpy.types.Action] = [a for a in bpy.data.actions if "Armature" in a.name] # Animations
 cameras: list[bpy.types.Object] = [c for c in bpy.data.objects if c.type == "CAMERA"]
+if sys.argv[-1] == "action_count":
+    print(len(actions))
+    exit(0)
 
 # Scene setup
 action = random.choice(actions) # Select random animation

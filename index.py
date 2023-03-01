@@ -22,6 +22,15 @@ def get_length(filename) -> float:
 def get_blend_files(dir) -> list[str]:
     return list(filter(lambda file: file.endswith(".blend"), os.listdir(dir)))
 
+def render_blend_file(blend_file):
+    subprocess.run([blender_path, "--background", f"blend/{blend_file}", "--python", "blender.py"])
+
+def get_action_count(blend_file) -> int:
+    result = subprocess.run([blender_path, "--background", f"blend/{blend_file}", "--python", "blender.py", "action_count"], stdout=subprocess.PIPE)
+    if result.returncode != 0:
+        raise Exception(result.stdout)
+    return int(result.stdout.decode("utf-8").split("\n")[-2].strip())
+
 if __name__ == "__main__":
     # Load config from json file
     with open("config.json", "r") as f:
@@ -35,31 +44,42 @@ if __name__ == "__main__":
         for file in os.listdir("out"):
             os.remove(f"out/{file}")
 
+    # Get list of blend files
+    blend_files = get_blend_files("blend")
+
     # Get paths to executables (if set).
     blender_path = config["blender_path"] or "blender"
     ffmpeg_path = config["ffmpeg_path"] or "ffmpeg"
     ffprobe_path = config["ffprobe_path"] or "ffprobe"
+
+    if not os.path.exists("random.json"):
+        print("Creating random.json...")
+        with open("random.json", "w") as f:
+            f.write("{}")
+    with open("random.json", "r+") as f:
+        print("Checking random.json...")
+        random_json: dict = json.load(f)
+        f.seek(0)
+        modified = False
+        for blend in blend_files:
+            if blend not in random_json:
+                print(f"{blend} not in random.json; getting animation count...")
+                random_json[blend] = get_action_count(blend)
+                modified = True
+        if modified:
+            print("random.json updated; writing to file...")
+            json.dump(random_json, f, indent=4)
 
     # Select which blend file to render from
     if len(sys.argv) > 1:
         # Get blend file from command line
         blend_file = sys.argv[1]
     else:
-        if config["default_blend"] != "":
-            # Select default blend file
-            blend_file = config["default_blend"]
-
-            # Random chance to select a nondefault blend file
-            if random.randint(0, 100) / 100 < config["nondefault_chance"]:
-                files = get_blend_files("blend") # Get list of blend files
-                files.remove(blend_file) # Remove default blend file from list
-                blend_file = random.choice(files) # Select random blend file
-        else:
-            # Select a random blend file
-            blend_file = random.choice(get_blend_files("blend"))
+        # Randomly select blend file
+        blend_file = random.choices(list(random_json.keys()), list(random_json.values()), k=1)[0]
 
     # Render a random animation from the blend file
-    subprocess.run([blender_path, "--background", f"blend/{blend_file}", "--python", "blender.py"])
+    render_blend_file(blend_file)
     video = os.listdir("out")[0] # Get filename of render
     name = os.path.splitext(video)[0] # Get animation name from filename
 
