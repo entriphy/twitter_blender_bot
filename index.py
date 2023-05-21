@@ -101,6 +101,10 @@ if __name__ == "__main__":
         callback=os.environ.get("TWITTER_CALLBACK") or config["callback"]
     )
     api = tweepy.API(auth)
+    client = tweepy.Client(
+        consumer_key=os.environ.get("TWITTER_CONSUMER_KEY") or config["consumer_key"], consumer_secret=os.environ.get("TWITTER_CONSUMER_SECRET") or config["consumer_secret"],
+        access_token=os.environ.get("TWITTER_ACCESS_TOKEN") or config["access_token"], access_token_secret=os.environ.get("TWITTER_ACCESS_TOKEN_SECRET") or config["access_token_secret"],
+    )
 
     # Upload video to Twitter
     uploaded = api.media_upload(f"out/{video}", media_category="TWEET_VIDEO" if video.endswith("mp4") else "TWEET_GIF", chunked=True)
@@ -115,5 +119,6 @@ if __name__ == "__main__":
         with open("infos.json") as f:
             infos = json.load(f)
             status += f"\n{infos.get(name, '')}"
-    api.update_status(status, media_ids=[uploaded.media_id_string])
+    client.create_tweet(text=status, media_ids=[uploaded.media_id_string])
+    
     os.remove(f"out/{video}") # Delete video file
