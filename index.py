@@ -1,3 +1,4 @@
+import atproto
 import json
 import os
 import platform
@@ -81,12 +82,12 @@ if __name__ == "__main__":
     # Render a random animation from the blend file
     render_blend_file(blend_file)
     video = os.listdir("out")[0] # Get filename of render
+    orig_video = video
     name = os.path.splitext(video)[0] # Get animation name from filename
 
     # Convert mp4 to gif if length of video is <= gif_duration
     if get_length(f"out/{video}") <= config["gif_duration"]:
         mp4_to_gif(f"out/{video}") # Convert mp4 to gif
-        os.remove(f"out/{video}") # Delete mp4 file
         video = video.replace(".mp4", ".gif")
     
     # Check if hostname_filter is set and exit if hostname_filter is not in hostname (for debugging/testing purposes)
@@ -120,5 +121,16 @@ if __name__ == "__main__":
             infos = json.load(f)
             status += f"\n{infos.get(name, '')}"
     client.create_tweet(text=status, media_ids=[uploaded.media_id_string])
+
+    # Upload video to Bluesky
+    if "BLUESKY_USERNAME" in os.environ and "BLUESKY_PASSWORD" in os.environ:
+        bsky_client = atproto.Client()
+        bsky_profile = bsky_client.login(os.environ.get("BLUESKY_USERNAME"), os.environ.get("BLUESKY_PASSWORD"))
+        with open(f"out/{orig_video}", "rb") as f:
+            video_bytes = f.read()
+        res = bsky_client.send_video(status, video_bytes)
     
-    os.remove(f"out/{video}") # Delete video file
+    # Delete video file
+    os.remove(f"out/{video}")
+    if orig_video != video:
+        os.remove(f"out/{orig_video}")
